@@ -71,7 +71,7 @@ export default function App() {
       <header className="bg-white border-b border-slate-100 sticky top-0 z-40 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <button onClick={() => navigate("home")} className="flex items-center gap-2 font-bold text-blue-700 text-lg">
-            <span className="text-2xl">🩺</span><span className="hidden sm:inline">MediConnect</span>
+            <span className="text-2xl">🩺</span><span className="hidden sm:inline">MediConnect26</span>
           </button>
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map(n => (
@@ -100,7 +100,7 @@ export default function App() {
       <footer className="bg-slate-800 text-slate-300 py-10 mt-10">
         <div className="max-w-5xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <p className="text-white font-bold text-lg mb-2">🩺 MediConnect</p>
+            <p className="text-white font-bold text-lg mb-2">🩺 MediConnect26</p>
             <p className="text-sm text-slate-400">{DOCTOR.clinic}</p>
             <p className="text-sm text-slate-400 mt-1">{DOCTOR.address}</p>
           </div>
@@ -118,7 +118,7 @@ export default function App() {
           </div>
         </div>
         <div className="max-w-5xl mx-auto px-6 mt-8 pt-6 border-t border-slate-700 text-xs text-slate-500 text-center">
-          © 2026 MediConnect. All rights reserved. · TakeOver'26 Hackathon Submission.
+          © 2026 MediConnect26. All rights reserved. · TakeOver'26 Hackathon Submission.
         </div>
       </footer>
     </div>
