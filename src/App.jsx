@@ -38,6 +38,8 @@ const [doctorLoggedIn, setDoctorLoggedIn] = useState(false);
 const [currentDoctorId, setCurrentDoctorId] = useState(null);
 const [receptionLoggedIn, setReceptionLoggedIn] = useState(false);
 const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+const [showBot, setShowBot] = useState(true);
+const [expandBot, setExpandBot] = useState(false);
   const navigate = (p) => {
     setPage(p);
     setMobileMenuOpen(false);
@@ -329,7 +331,118 @@ const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
       <main className="flex-1">
         {renderPage()}
       </main>
+      
+{!isStaffPage && showBot && (
+  <div className="fixed bottom-6 right-6 z-50 flex items-end gap-3">
 
+    {expandBot && (
+  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xl w-72">
+
+    <div className="flex items-center justify-between mb-3">
+
+      <div className="flex items-center gap-2">
+        <span className="text-2xl">🤖</span>
+
+        <div>
+          <p className="font-bold text-slate-800">
+            MediBot
+          </p>
+
+          <p className="text-[10px] text-slate-500">
+            AI Healthcare Assistant
+          </p>
+        </div>
+      </div>
+
+      <button
+        onClick={() => setExpandBot(false)}
+        className="text-slate-400 hover:text-slate-700 text-lg"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <p className="text-xs text-slate-600 leading-relaxed">
+      👋 Welcome to MediConnect!
+
+      <br /><br />
+
+      I'm MediBot, your AI Healthcare Assistant 🩺
+
+      <br /><br />
+
+      I can help you with:
+
+      <br />
+      📅 Appointment Booking
+      <br />
+      👨‍⚕️ Doctors
+      <br />
+      🏥 Services
+      <br />
+      💰 Consultation Fees
+      <br />
+      ⏰ Clinic Timings
+    </p>
+
+    <div className="mt-4 flex flex-col gap-2">
+
+      <button
+        onClick={() => navigate("book")}
+        className="w-full text-left border rounded-xl px-3 py-2 text-xs hover:bg-slate-50"
+      >
+        📅 Book Appointment
+      </button>
+
+      <button
+        onClick={() => navigate("doctors")}
+        className="w-full text-left border rounded-xl px-3 py-2 text-xs hover:bg-slate-50"
+      >
+        👨‍⚕️ View Doctors
+      </button>
+
+      <button
+        onClick={() => navigate("services")}
+        className="w-full text-left border rounded-xl px-3 py-2 text-xs hover:bg-slate-50"
+      >
+        🏥 Our Services
+      </button>
+
+      <button
+        onClick={() => navigate("contact")}
+        className="w-full text-left border rounded-xl px-3 py-2 text-xs hover:bg-slate-50"
+      >
+        📞 Contact Clinic
+      </button>
+
+    </div>
+
+  </div>
+)}
+      
+    
+
+    <div className="relative">
+
+      <button
+        onClick={() => setExpandBot(!expandBot)}
+        className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-3xl shadow-2xl hover:scale-105 transition"
+      >
+        🤖
+      </button>
+
+      <button
+        onClick={() => setShowBot(false)}
+        className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white text-xs font-bold shadow"
+      >
+        ×
+      </button>
+
+    </div>
+
+  </div>
+)}
       {!isStaffPage && (
         <footer className="bg-slate-800 text-slate-300 py-10 mt-10">
           <div className="max-w-5xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
