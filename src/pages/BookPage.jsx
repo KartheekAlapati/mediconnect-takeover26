@@ -6,6 +6,7 @@ import {
 } from "../data/mockData";
 import { genId } from "../utils/helpers";
 import { Card, Badge } from "../components/UIComponents";
+import { supabase } from "../utils/supabase";
 
 export default function BookPage({
   appointments,
@@ -82,7 +83,7 @@ export default function BookPage({
     return e;
   };
 
-  const submit = () => {
+  const submit = async () => {
   console.log("SUBMIT CLICKED");
 
   const validationErrors = validate();
@@ -147,6 +148,13 @@ if (doctorBookings.length >= MAX_SLOTS_PER_DOCTOR) {
     createdAt: new Date().toISOString(),
   };
 
+  const { error } = await supabase.from("appointments").insert([appointment]);
+  if (error) {
+    console.error("Booking error:", error);
+    alert("Failed to book waitlist appointment.");
+    return;
+  }
+
   setAppointments((prev) => [...prev, appointment]);
 
   setSuccess(appointment);
@@ -162,6 +170,13 @@ setErrors({});
       status: "requested",
       createdAt: new Date().toISOString(),
     };
+
+    const { error } = await supabase.from("appointments").insert([appointment]);
+    if (error) {
+      console.error("Booking error:", error);
+      alert("Failed to book appointment.");
+      return;
+    }
 
     setAppointments((prev) => [...prev, appointment]);
 

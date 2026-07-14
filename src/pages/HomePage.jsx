@@ -88,18 +88,6 @@ export default function HomePage({ navigate }) {
         </div>
       </section>
 
-      <section className="max-w-5xl mx-auto px-6 py-14">
-        <Card className="p-8 bg-gradient-to-br from-blue-600 to-blue-700 text-white border-0">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="text-6xl">🤖</div>
-            <div className="flex-1 text-center md:text-left">
-              <h3 className="text-xl font-bold mb-1">MediAssist – AI Health Helper</h3>
-              <p className="text-blue-100 mb-4">Ask about clinic timings, services, appointments and more.</p>
-              <button onClick={() => navigate("ai")} className="bg-white text-blue-700 font-semibold px-5 py-2.5 rounded-xl hover:bg-blue-50 transition">Chat with MediAssist</button>
-            </div>
-          </div>
-        </Card>
-      </section>
     </div>
   );
 }

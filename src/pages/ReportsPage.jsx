@@ -4,8 +4,26 @@ import { Card, StatCard } from "../components/UIComponents";
 export default function ReportsPage({ appointments }) {
   const byService = SERVICES.map(s => ({ label: s.label, count: appointments.filter(a => a.service === s.id).length })).sort((a, b) => b.count - a.count);
   const maxService = Math.max(...byService.map(s => s.count), 1);
-  const weeks = ["Mon","Tue","Wed","Thu","Fri","Sat"];
-  const weekData = [12, 18, 14, 22, 19, 25];
+  
+  const last7Days = Array.from({length: 6}, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (5 - i));
+    return d;
+  });
+  const weeks = last7Days.map(d => d.toLocaleDateString('en-US', { weekday: 'short' }));
+  const weekData = last7Days.map(d => {
+    const dStr = d.toISOString().split('T')[0];
+    return appointments.filter(a => a.date === dStr && a.status !== 'cancelled').length;
+  });
+
+  const SERVICE_PRICES = {
+    general: 500,
+    dental: 800,
+    child: 600,
+    skin: 900,
+    ent: 700,
+    other: 500
+  };
 
   // Workforce Utilization Analytics
   const workforceData = DOCTORS.map((doc) => {
@@ -38,7 +56,7 @@ const waitlist = appointments.filter(
 const estimatedRevenue = appointments
   .filter(a => a.status !== "cancelled")
   .reduce(
-    (sum, a) => sum + (a.price || 0),
+    (sum, a) => sum + (a.price || SERVICE_PRICES[a.service] || 500),
     0
   );
   const utilization = Math.round(
@@ -138,7 +156,7 @@ const estimatedRevenue = appointments
             <li className="flex gap-3"><span className="text-emerald-400">✓</span> <span><strong>Dynamic Pricing:</strong> +15% surge enabled for PM slots.</span></li>
             <li className="flex gap-3"><span className="text-emerald-400">✓</span> <span><strong>Dynamic Pricing:</strong> +₹50 premium active for weekends.</span></li>
             <li className="flex gap-3"><span className="text-emerald-400">✓</span> <span><strong>Auto-Notify:</strong> WhatsApp reminders dispatched 24h prior.</span></li>
-            <li className="flex gap-3"><span className="text-emerald-400">✓</span> <span><strong>No-Show AI:</strong> Identifying high-risk patients on schedule view.</span></li>
+            <li className="flex gap-3"><span className="text-emerald-400">✓</span> <span><strong>Pending Confirmation:</strong> Tracking unconfirmed patients on schedule view.</span></li>
           </ul>
         </Card>
       </div>

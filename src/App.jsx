@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useLocalStorage from "./hooks/useLocalStorage";
-import { SAMPLE_APPOINTMENTS, SAMPLE_PATIENTS, DOCTOR } from "./data/mockData";
+import { supabase } from "./utils/supabase";
+import { SAMPLE_PATIENTS, DOCTOR, AI_RESPONSES } from "./data/mockData";
 
 import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
@@ -17,29 +18,46 @@ import SchedulePage from "./pages/SchedulePage";
 import PatientDatabase from "./pages/PatientDatabase";
 import ReportsPage from "./pages/ReportsPage";
 
-import AIPage from "./pages/AIPage";
 import AdminLogin from "./pages/AdminLogin";
 import ReceptionPortal from "./pages/ReceptionPortal";
 import OurDoctors from "./pages/OurDoctors";
+import MediBot from "./components/MediBot";
+
 export default function App() {
-  const [appointments, setAppointments] = useLocalStorage(
-    "mc_appointments",
-    SAMPLE_APPOINTMENTS
-  );
+  const [appointments, setAppointments] = useState([]);
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      const { data, error } = await supabase.from("appointments").select("*");
+      if (error) {
+        console.error("Error fetching appointments:", error);
+      } else if (data) {
+        setAppointments(data);
+      }
+    };
+
+    fetchAppointments();
+
+    const interval = setInterval(fetchAppointments, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const [patients] = useLocalStorage(
     "mc_patients",
     SAMPLE_PATIENTS
   );
 
-  const [page, setPage] = useState("home");
+  const [page, setPage] = useState(
+    window.location.pathname.startsWith("/admin") ? "admin" : "home"
+  );
 
-const [doctorLoggedIn, setDoctorLoggedIn] = useState(false);
-const [currentDoctorId, setCurrentDoctorId] = useState(null);
-const [receptionLoggedIn, setReceptionLoggedIn] = useState(false);
-const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-const [showBot, setShowBot] = useState(true);
-const [expandBot, setExpandBot] = useState(false);
+  const [doctorLoggedIn, setDoctorLoggedIn] = useState(false);
+  const [currentDoctorId, setCurrentDoctorId] = useState(null);
+  const [receptionLoggedIn, setReceptionLoggedIn] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showBot, setShowBot] = useState(true);
+
   const navigate = (p) => {
     setPage(p);
     setMobileMenuOpen(false);
@@ -47,25 +65,25 @@ const [expandBot, setExpandBot] = useState(false);
   };
 
   const logout = () => {
-  if (window.confirm("Are you sure you want to logout?")) {
+    if (window.confirm("Are you sure you want to logout?")) {
 
-    setDoctorLoggedIn(false);
-    setReceptionLoggedIn(false);
-    setCurrentDoctorId(null);
+      setDoctorLoggedIn(false);
+      setReceptionLoggedIn(false);
+      setCurrentDoctorId(null);
 
-    navigate("home");
-  }
-};
+      navigate("home");
+    }
+  };
 
   const patientNav = [
-  { id: "home", label: "Home" },
-  { id: "doctors", label: "Our Doctors" },
-  { id: "services", label: "Services" },
-  { id: "book", label: "Book Appointment" },
-  { id: "patient", label: "My Appointments" },
-  { id: "contact", label: "Contact" },
-  
-];
+    { id: "home", label: "Home" },
+    { id: "doctors", label: "Our Doctors" },
+    { id: "services", label: "Services" },
+    { id: "book", label: "Book Appointment" },
+    { id: "patient", label: "My Appointments" },
+    { id: "contact", label: "Contact" },
+
+  ];
 
   const doctorNav = [
     { id: "docDash", label: "Dashboard" },
@@ -95,14 +113,14 @@ const [expandBot, setExpandBot] = useState(false);
         return <HomePage navigate={navigate} />;
 
       case "about":
-  return <AboutPage navigate={navigate} />;
+        return <AboutPage navigate={navigate} />;
       case "doctors":
-  return (
-    <OurDoctors navigate={navigate} />
-  );
+        return (
+          <OurDoctors navigate={navigate} />
+        );
       case "services":
         return <ServicesPage navigate={navigate} />;
-      
+
       case "book":
         return (
           <BookPage
@@ -121,10 +139,7 @@ const [expandBot, setExpandBot] = useState(false);
         );
 
       case "contact":
-  return <ContactPage navigate={navigate} />;
-
-      case "ai":
-  return <AIPage navigate={navigate} />;
+        return <ContactPage navigate={navigate} />;
 
       case "admin":
         return <AdminLogin navigate={navigate} />;
@@ -163,37 +178,37 @@ const [expandBot, setExpandBot] = useState(false);
         );
 
       case "doctorLogin":
-  return (
-    <DoctorLogin
-      onLogin={(doctorId) => {
-        setDoctorLoggedIn(true);
-        setCurrentDoctorId(doctorId);
-        navigate("docDash");
-      }}
-    />
-  );
+        return (
+          <DoctorLogin
+            onLogin={(doctorId) => {
+              setDoctorLoggedIn(true);
+              setCurrentDoctorId(doctorId);
+              navigate("docDash");
+            }}
+          />
+        );
 
       case "docDash":
-  if (!doctorLoggedIn) {
-    return (
-      <DoctorLogin
-        onLogin={(doctorId) => {
-          setDoctorLoggedIn(true);
-          setCurrentDoctorId(doctorId);
-          navigate("docDash");
-        }}
-      />
-    );
-  }
+        if (!doctorLoggedIn) {
+          return (
+            <DoctorLogin
+              onLogin={(doctorId) => {
+                setDoctorLoggedIn(true);
+                setCurrentDoctorId(doctorId);
+                navigate("docDash");
+              }}
+            />
+          );
+        }
 
         return (
           <DoctorDashboard
-  appointments={appointments}
-  setAppointments={setAppointments}
-  patients={patients}
-  navigate={navigate}
-  currentDoctorId={currentDoctorId}
-/>
+            appointments={appointments}
+            setAppointments={setAppointments}
+            patients={patients}
+            navigate={navigate}
+            currentDoctorId={currentDoctorId}
+          />
         );
 
       case "schedule":
@@ -209,8 +224,7 @@ const [expandBot, setExpandBot] = useState(false);
           navigate("doctorLogin");
           return null;
         }
-
-        return <PatientDatabase patients={patients} />;
+        return <PatientDatabase patients={patients} appointments={appointments} />;
 
       case "reports":
         if (!doctorLoggedIn) {
@@ -232,81 +246,63 @@ const [expandBot, setExpandBot] = useState(false);
 
       {!isStaffPage && (
         <header className="bg-white border-b border-slate-100 sticky top-0 z-40 shadow-sm">
-  <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
 
-    <button
-      onClick={() => navigate("home")}
-      className="flex items-center gap-2 font-bold text-blue-700 text-lg"
-    >
-      <span className="text-2xl">🩺</span>
-      <span className="hidden sm:inline">MediConnect26</span>
-    </button>
+            <button
+              onClick={() => navigate("home")}
+              className="flex items-center gap-2 font-bold text-blue-700 text-lg"
+            >
+              <span className="text-2xl">🩺</span>
+              <span className="hidden sm:inline">MediConnect26</span>
+            </button>
 
-    <nav className="hidden md:flex items-center gap-1">
-      {navItems.map((n) => (
-        <button
-          key={n.id}
-          onClick={() => navigate(n.id)}
-          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-            page === n.id
-              ? "bg-blue-600 text-white"
-              : "text-slate-600 hover:bg-slate-100"
-          }`}
-        >
-          {n.label}
-        </button>
-      ))}
-    </nav>
+            <nav className="hidden md:flex items-center gap-1">
+              {navItems.map((n) => (
+                <button
+                  key={n.id}
+                  onClick={() => navigate(n.id)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${page === n.id
+                    ? "bg-blue-600 text-white"
+                    : "text-slate-600 hover:bg-slate-100"
+                    }`}
+                >
+                  {n.label}
+                </button>
+              ))}
+            </nav>
 
-    <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
 
-      <button
-        onClick={() => navigate("admin")}
-        className="hidden md:block text-sm bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition"
-      >
-        Admin Login
-      </button>
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden text-2xl text-slate-700"
+              >
+                ☰
+              </button>
 
-      <button
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="md:hidden text-2xl text-slate-700"
-      >
-        ☰
-      </button>
+            </div>
 
-    </div>
+          </div>
 
-  </div>
+          {mobileMenuOpen && (
+            <div className="md:hidden bg-white border-t border-slate-100 px-4 py-3 space-y-2">
 
-  {mobileMenuOpen && (
-    <div className="md:hidden bg-white border-t border-slate-100 px-4 py-3 space-y-2">
+              {navItems.map((n) => (
+                <button
+                  key={n.id}
+                  onClick={() => {
+                    navigate(n.id);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="block w-full text-left px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-100"
+                >
+                  {n.label}
+                </button>
+              ))}
 
-      {navItems.map((n) => (
-        <button
-          key={n.id}
-          onClick={() => {
-            navigate(n.id);
-            setMobileMenuOpen(false);
-          }}
-          className="block w-full text-left px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-100"
-        >
-          {n.label}
-        </button>
-      ))}
-
-      <button
-        onClick={() => {
-          navigate("admin");
-          setMobileMenuOpen(false);
-        }}
-        className="block w-full text-left px-3 py-2 rounded-lg text-sm bg-blue-600 text-white"
-      >
-        Admin Login
-      </button>
-
-    </div>
-  )}
-</header>
+            </div>
+          )}
+        </header>
       )}
 
       {isStaffPage && (
@@ -331,118 +327,8 @@ const [expandBot, setExpandBot] = useState(false);
       <main className="flex-1">
         {renderPage()}
       </main>
-      
-{!isStaffPage && showBot && (
-  <div className="fixed bottom-6 right-6 z-50 flex items-end gap-3">
 
-    {expandBot && (
-  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xl w-72">
-
-    <div className="flex items-center justify-between mb-3">
-
-      <div className="flex items-center gap-2">
-        <span className="text-2xl">🤖</span>
-
-        <div>
-          <p className="font-bold text-slate-800">
-            MediBot
-          </p>
-
-          <p className="text-[10px] text-slate-500">
-            AI Healthcare Assistant
-          </p>
-        </div>
-      </div>
-
-      <button
-        onClick={() => setExpandBot(false)}
-        className="text-slate-400 hover:text-slate-700 text-lg"
-      >
-        ×
-      </button>
-
-    </div>
-
-    <p className="text-xs text-slate-600 leading-relaxed">
-      👋 Welcome to MediConnect!
-
-      <br /><br />
-
-      I'm MediBot, your AI Healthcare Assistant 🩺
-
-      <br /><br />
-
-      I can help you with:
-
-      <br />
-      📅 Appointment Booking
-      <br />
-      👨‍⚕️ Doctors
-      <br />
-      🏥 Services
-      <br />
-      💰 Consultation Fees
-      <br />
-      ⏰ Clinic Timings
-    </p>
-
-    <div className="mt-4 flex flex-col gap-2">
-
-      <button
-        onClick={() => navigate("book")}
-        className="w-full text-left border rounded-xl px-3 py-2 text-xs hover:bg-slate-50"
-      >
-        📅 Book Appointment
-      </button>
-
-      <button
-        onClick={() => navigate("doctors")}
-        className="w-full text-left border rounded-xl px-3 py-2 text-xs hover:bg-slate-50"
-      >
-        👨‍⚕️ View Doctors
-      </button>
-
-      <button
-        onClick={() => navigate("services")}
-        className="w-full text-left border rounded-xl px-3 py-2 text-xs hover:bg-slate-50"
-      >
-        🏥 Our Services
-      </button>
-
-      <button
-        onClick={() => navigate("contact")}
-        className="w-full text-left border rounded-xl px-3 py-2 text-xs hover:bg-slate-50"
-      >
-        📞 Contact Clinic
-      </button>
-
-    </div>
-
-  </div>
-)}
-      
-    
-
-    <div className="relative">
-
-      <button
-        onClick={() => setExpandBot(!expandBot)}
-        className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-3xl shadow-2xl hover:scale-105 transition"
-      >
-        🤖
-      </button>
-
-      <button
-        onClick={() => setShowBot(false)}
-        className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white text-xs font-bold shadow"
-      >
-        ×
-      </button>
-
-    </div>
-
-  </div>
-)}
+      <MediBot navigate={navigate} showBot={!isStaffPage && showBot} />
       {!isStaffPage && (
         <footer className="bg-slate-800 text-slate-300 py-10 mt-10">
           <div className="max-w-5xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -461,17 +347,15 @@ const [expandBot, setExpandBot] = useState(false);
                 Quick Links
               </p>
 
-              {["home", "book", "contact", "ai"].map((p) => (
+              {["home", "book", "contact"].map((p) => (
                 <button
                   key={p}
                   onClick={() => navigate(p)}
                   className="block text-sm text-slate-400 hover:text-white capitalize mb-1 transition"
                 >
-                  {p === "ai"
-                    ? "AI Assistant"
-                    : p === "book"
-                    ? "Book Appointment"
-                    : p.charAt(0).toUpperCase() + p.slice(1)}
+                  {p === "book"
+                      ? "Book Appointment"
+                      : p.charAt(0).toUpperCase() + p.slice(1)}
                 </button>
               ))}
             </div>
@@ -485,6 +369,12 @@ const [expandBot, setExpandBot] = useState(false);
               <p className="text-sm text-slate-400 mt-1">
                 {DOCTOR.timings}
               </p>
+              <button
+                onClick={() => navigate("admin")}
+                className="mt-6 text-xs text-slate-800 hover:text-slate-500 transition cursor-pointer"
+              >
+                Staff Access
+              </button>
             </div>
           </div>
         </footer>

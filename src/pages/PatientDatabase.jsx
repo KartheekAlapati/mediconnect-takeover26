@@ -1,9 +1,32 @@
 import { useState } from "react";
 import { Card } from "../components/UIComponents";
 
-export default function PatientDatabase({ patients }) {
+export default function PatientDatabase({ appointments }) {
   const [search, setSearch] = useState("");
-  const filtered = patients.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.phone.includes(search));
+
+  const derivedPatientsMap = new Map();
+  (appointments || []).forEach(a => {
+    if (a.phone && a.status !== 'cancelled') {
+      if (!derivedPatientsMap.has(a.phone)) {
+        derivedPatientsMap.set(a.phone, {
+          id: a.phone.slice(-4),
+          name: a.patientName || a.name || "Unknown",
+          phone: a.phone,
+          age: a.age || "-",
+          visitCount: 1,
+          lastVisit: a.date,
+          notes: a.notes || ""
+        });
+      } else {
+        const existing = derivedPatientsMap.get(a.phone);
+        existing.visitCount += 1;
+        if (a.date > existing.lastVisit) existing.lastVisit = a.date;
+      }
+    }
+  });
+  
+  const displayPatients = Array.from(derivedPatientsMap.values());
+  const filtered = displayPatients.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.phone.includes(search));
   
   return (
     <div className="max-w-5xl mx-auto px-6 py-14">

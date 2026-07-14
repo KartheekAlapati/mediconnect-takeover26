@@ -3,6 +3,8 @@ import { Card, Badge, Modal } from "../components/UIComponents";
 import { TIME_SLOTS, fmt, today } from "../data/mockData";
 import { serviceLabel } from "../utils/helpers";
 
+import { supabase } from "../utils/supabase";
+
 export default function PatientDashboard({ appointments, setAppointments }) {
   const [phone, setPhone] = useState("");
   const [searched, setSearched] = useState(false);
@@ -12,10 +14,19 @@ export default function PatientDashboard({ appointments, setAppointments }) {
 
   const myAppts = searched ? appointments.filter(a => a.phone === phone) : [];
 
-  const cancel = (id) => setAppointments(prev => prev.map(a => a.id === id ? {...a, status: "cancelled"} : a));
-  const doReschedule = () => {
+  const cancel = async (id) => {
+    const { error } = await supabase.from("appointments").update({ status: "cancelled" }).eq("id", id);
+    if (!error) {
+      setAppointments(prev => prev.map(a => a.id === id ? {...a, status: "cancelled"} : a));
+    }
+  };
+  
+  const doReschedule = async () => {
     if (!newDate || !newTime) return;
-    setAppointments(prev => prev.map(a => a.id === reschedule ? {...a, date: newDate, time: newTime, status: "pending"} : a));
+    const { error } = await supabase.from("appointments").update({ date: newDate, time: newTime, status: "pending" }).eq("id", reschedule);
+    if (!error) {
+      setAppointments(prev => prev.map(a => a.id === reschedule ? {...a, date: newDate, time: newTime, status: "pending"} : a));
+    }
     setReschedule(null); setNewDate(""); setNewTime("");
   };
 
