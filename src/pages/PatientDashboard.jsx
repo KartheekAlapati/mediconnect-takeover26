@@ -22,7 +22,7 @@ export default function PatientDashboard({ appointments, setAppointments }) {
   return (
     <div className="max-w-3xl mx-auto px-6 py-14">
       <h1 className="text-3xl font-bold text-slate-800 mb-2">My Appointments</h1>
-      <p className="text-slate-500 mb-8">Enter your registered phone number to view your appointments.</p>
+      <p className="text-slate-600 mb-8">Enter your registered phone number to view your appointments.</p>
       <Card className="p-5 flex gap-3 mb-8">
         <input className="flex-1 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="10-digit mobile number" value={phone} onChange={e => setPhone(e.target.value)} />
         <button onClick={() => setSearched(true)} className="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-medium hover:bg-blue-700 transition text-sm">Find</button>

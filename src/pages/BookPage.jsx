@@ -291,7 +291,7 @@ setErrors({});
         Book an Appointment
       </h1>
 
-      <p className="text-slate-500 mb-8">
+      <p className="text-slate-600 mb-8">
         Fill in your details and request an appointment.
       </p>
 

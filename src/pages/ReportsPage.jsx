@@ -48,7 +48,7 @@ const estimatedRevenue = appointments
   return (
     <div className="max-w-5xl mx-auto px-6 py-14">
       <h1 className="text-3xl font-bold text-slate-800 mb-2">Resource & Capacity Analytics</h1>
-      <p className="text-slate-500 mb-8">Data-driven insights for workforce optimization</p>
+      <p className="text-slate-600 mb-8">Data-driven insights for workforce optimization</p>
       
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
         <StatCard

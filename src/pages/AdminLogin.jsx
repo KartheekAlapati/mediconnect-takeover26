@@ -9,7 +9,7 @@ export default function AdminLogin({ navigate }) {
           Admin Login
         </h2>
 
-        <p className="text-sm text-slate-500 mb-8">
+        <p className="text-sm text-slate-600 mb-8">
           Select your portal
         </p>
 

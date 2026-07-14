@@ -15,7 +15,7 @@ export default function HomePage({ navigate }) {
             <p className="text-blue-100 max-w-md mb-8 leading-relaxed">{DOCTOR.tagline}</p>
             <div className="flex flex-wrap gap-3 justify-center md:justify-start">
               <button onClick={() => navigate("book")} className="bg-white text-blue-700 font-semibold px-6 py-3 rounded-xl hover:bg-blue-50 transition shadow z-10 relative">Book Appointment</button>
-              <a href={`https://wa.me/${DOCTOR.whatsapp}`} target="_blank" rel="noopener noreferrer" className="bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl hover:bg-emerald-600 transition shadow flex items-center gap-2 z-10 relative">
+              <a href={`https://wa.me/${DOCTOR.whatsapp}`} target="_blank" rel="noopener noreferrer" className="bg-emerald-700 text-white font-semibold px-6 py-3 rounded-xl hover:bg-emerald-600 transition shadow flex items-center gap-2 z-10 relative">
                 <span>💬</span> WhatsApp Us
               </a>
             </div>
@@ -48,7 +48,7 @@ export default function HomePage({ navigate }) {
 
       <section className="max-w-5xl mx-auto px-6 py-14">
         <h2 className="text-2xl font-bold text-slate-800 mb-2">Our Services</h2>
-        <p className="text-slate-500 mb-8">Comprehensive healthcare for every need</p>
+        <p className="text-slate-600 mb-8">Comprehensive healthcare for every need</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
           {SERVICES.map(s => (
             <Card key={s.id} className="p-5 hover:shadow-md transition cursor-pointer" onClick={() => navigate("services")}>
@@ -63,7 +63,7 @@ export default function HomePage({ navigate }) {
       <section className="bg-blue-50 py-14">
         <div className="max-w-5xl mx-auto px-6">
           <h2 className="text-2xl font-bold text-slate-800 mb-2">What Patients Say</h2>
-          <p className="text-slate-500 mb-8">Real experiences from our community</p>
+          <p className="text-slate-600 mb-8">Real experiences from our community</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {TESTIMONIALS.map((t, i) => (
               <Card key={i} className="p-5">
@@ -80,7 +80,9 @@ export default function HomePage({ navigate }) {
         <div className="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <p className="font-bold text-lg">🚨 Medical Emergency?</p>
-            <p className="text-red-100 text-sm">Call us immediately or dial 108 for ambulance</p>
+            <p className="text-white text-sm">
+  Call us immediately or dial 108 for ambulance
+</p>
           </div>
           <a href={`tel:${DOCTOR.phone}`} className="bg-white text-red-600 font-bold px-6 py-3 rounded-xl hover:bg-red-50 transition shrink-0">{DOCTOR.phone}</a>
         </div>

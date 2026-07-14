@@ -19,7 +19,7 @@ export default function ContactPage() {
               <div><p className="text-xs text-slate-400 uppercase tracking-wide">{label}</p><p className="text-sm text-slate-700 font-medium mt-0.5">{val}</p></div>
             </Card>
           ))}
-          <a href={`https://wa.me/${DOCTOR.whatsapp}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-emerald-500 text-white px-5 py-3 rounded-xl font-semibold hover:bg-emerald-600 transition justify-center">
+          <a href={`https://wa.me/${DOCTOR.whatsapp}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-emerald-700 text-white px-5 py-3 rounded-xl font-semibold hover:bg-emerald-600 transition justify-center">
             💬 Chat on WhatsApp
           </a>
           <a href={`tel:${DOCTOR.phone}`} className="flex items-center gap-3 bg-red-500 text-white px-5 py-3 rounded-xl font-semibold hover:bg-red-600 transition justify-center">
