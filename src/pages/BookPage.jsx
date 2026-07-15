@@ -16,6 +16,7 @@ export default function BookPage({
   const [form, setForm] = useState({
     name: "",
     phone: "",
+    email: "",
     age: "",
     date: "",
     time: "",
@@ -42,6 +43,10 @@ export default function BookPage({
 
     if (!/^\d{10}$/.test(form.phone)) {
       e.phone = "Enter a valid 10-digit phone number";
+    }
+
+    if (form.email && !/^\S+@\S+\.\S+$/.test(form.email)) {
+      e.email = "Enter a valid email address";
     }
 
     if (
@@ -148,9 +153,10 @@ if (doctorBookings.length >= MAX_SLOTS_PER_DOCTOR) {
     createdAt: new Date().toISOString(),
   };
 
+  console.log("Payload being inserted:", appointment);
   const { error } = await supabase.from("appointments").insert([appointment]);
   if (error) {
-    console.error("Booking error:", error);
+    console.error("Booking error:", JSON.stringify(error, null, 2));
     alert("Failed to book waitlist appointment.");
     return;
   }
@@ -171,9 +177,10 @@ setErrors({});
       createdAt: new Date().toISOString(),
     };
 
+    console.log("Payload being inserted:", appointment);
     const { error } = await supabase.from("appointments").insert([appointment]);
     if (error) {
-      console.error("Booking error:", error);
+      console.error("Booking error:", JSON.stringify(error, null, 2));
       alert("Failed to book appointment.");
       return;
     }
@@ -267,6 +274,7 @@ setErrors({});
               setForm({
                 name: "",
                 phone: "",
+                email: "",
                 age: "",
                 date: "",
                 time: "",
@@ -350,6 +358,27 @@ setErrors({});
             />
 
             {showError("phone")}
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-slate-600 mb-1 block">
+              Email Address (Optional)
+            </label>
+
+            <input
+              type="email"
+              className={inputClass}
+              value={form.email}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  email: e.target.value,
+                })
+              }
+              placeholder="patient@example.com"
+            />
+
+            {showError("email")}
           </div>
 
           <div>

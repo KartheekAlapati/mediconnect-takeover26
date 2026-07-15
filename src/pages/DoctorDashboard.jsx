@@ -93,6 +93,89 @@ const totalPatients = new Set(
     setSimulatedCount(reminders.length);
   };
 
+  const [aiBrief, setAiBrief] = useState(null);
+  const [generatingBrief, setGeneratingBrief] = useState(false);
+  const [briefError, setBriefError] = useState(null);
+  
+  // Store metrics for UI display
+  const [briefMetrics, setBriefMetrics] = useState(null);
+
+  const generateAIBrief = async () => {
+    setGeneratingBrief(true);
+    setBriefError(null);
+    try {
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      if (!apiKey) throw new Error("Missing Gemini API Key");
+
+      // Compute metrics
+      const allTodayAppts = filteredAppts.filter(a => a.date === todayStr);
+      const totalAppointments = todayAppts.length;
+      const cancellationCount = allTodayAppts.filter(a => a.status === "cancelled").length;
+      const waitlistCount = allTodayAppts.filter(a => a.status === "waitlist").length;
+      
+      const hourCounts = {};
+      todayAppts.forEach(a => {
+        if (!a.time) return;
+        const hour = a.time.split(":")[0] + " " + a.time.split(" ")[1];
+        hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+      });
+      let peakHour = "N/A";
+      let maxCount = 0;
+      for (const [h, count] of Object.entries(hourCounts)) {
+        if (count > maxCount) {
+          maxCount = count;
+          peakHour = h;
+        }
+      }
+
+      const todayActive = allTodayAppts.filter(a => a.status !== "cancelled" && a.status !== "waitlist").length;
+      const utilizationPercentage = Math.round((todayActive / MAX_SLOTS_PER_DOCTOR) * 100) + "%";
+
+      // Save to state for UI
+      setBriefMetrics({
+        total: totalAppointments,
+        peak: peakHour,
+        waitlist: waitlistCount,
+        util: utilizationPercentage
+      });
+
+      const prompt = `You are an AI assistant for a doctor. Create a short daily brief for ${doctorName}.
+Today is ${todayStr}.
+
+Metrics:
+- Total active appointments today: ${totalAppointments}
+- Peak hour: ${peakHour}
+- Cancellations today: ${cancellationCount}
+- Patients currently on waitlist: ${waitlistCount}
+- Daily utilization: ${utilizationPercentage}
+
+Based on these metrics, provide a concise summary and one practical recommendation.
+Keep the response under 120 words. Be professional and directly address the doctor. No markdown formatting.`;
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+          }),
+        }
+      );
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.error?.message || "Failed to generate brief");
+
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Unable to generate brief.";
+      setAiBrief(text);
+    } catch (err) {
+      console.error(err);
+      setBriefError(err.message);
+    } finally {
+      setGeneratingBrief(false);
+    }
+  };
+
   console.log("Doctor ID:", currentDoctorId);
 console.log("Appointments:", filteredAppts);
 console.log("Today:", todayAppts.length);
@@ -348,6 +431,63 @@ const doctorName =
         </div>
 
         <div className="space-y-6">
+
+          <Card className="p-6 bg-gradient-to-br from-indigo-50 to-blue-50 border-blue-100">
+            <h2 className="font-bold text-blue-900 mb-2 flex items-center gap-2">
+              <span>✨</span> AI Daily Brief
+            </h2>
+            <p className="text-xs text-blue-700 mb-4">
+              Get an intelligent summary of your schedule, peak hours, and actionable recommendations.
+            </p>
+
+            {aiBrief && briefMetrics ? (
+              <div className="space-y-4">
+                {/* Visual Metrics */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white p-3 rounded-lg border border-blue-100 shadow-sm text-center">
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Total Appts</p>
+                    <p className="text-lg font-black text-blue-900">{briefMetrics.total}</p>
+                  </div>
+                  <div className="bg-white p-3 rounded-lg border border-blue-100 shadow-sm text-center">
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Utilization</p>
+                    <p className="text-lg font-black text-emerald-600">{briefMetrics.util}</p>
+                  </div>
+                  <div className="bg-white p-3 rounded-lg border border-blue-100 shadow-sm text-center">
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Waitlist</p>
+                    <p className="text-lg font-black text-orange-600">{briefMetrics.waitlist}</p>
+                  </div>
+                  <div className="bg-white p-3 rounded-lg border border-blue-100 shadow-sm text-center">
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Peak Hour</p>
+                    <p className="text-sm mt-1 font-black text-violet-700">{briefMetrics.peak}</p>
+                  </div>
+                </div>
+
+                {/* AI Text */}
+                <div className="bg-white p-4 rounded-xl border border-blue-100 text-sm text-slate-700 whitespace-pre-wrap leading-relaxed shadow-sm">
+                  <span className="block text-xs font-bold text-blue-900 mb-2 uppercase tracking-wider">AI Insight & Recommendation</span>
+                  {aiBrief}
+                </div>
+              </div>
+            ) : generatingBrief ? (
+              <div className="bg-white p-4 rounded-xl border border-blue-100 flex items-center justify-center gap-2 h-24">
+                <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
+            ) : (
+              <button
+                onClick={generateAIBrief}
+                disabled={generatingBrief}
+                className="w-full bg-blue-600 text-white py-3 rounded-xl text-sm font-semibold hover:bg-blue-700 transition shadow-sm"
+              >
+                Generate AI Daily Brief
+              </button>
+            )}
+
+            {briefError && (
+              <p className="text-red-500 text-xs mt-2 text-center">{briefError}</p>
+            )}
+          </Card>
 
           <Card className="p-6">
 

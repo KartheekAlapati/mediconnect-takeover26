@@ -64,16 +64,13 @@ export const TESTIMONIALS = [
 ];
 
 export const SAMPLE_PATIENTS = [
-  { id: "P001", name: "Ravi Kumar", phone: "9876501001", age: 34, visitCount: 5, lastVisit: "2025-06-15", notes: "Hypertension – on medication" },
-  { id: "P002", name: "Priya Devi", phone: "9876501002", age: 28, visitCount: 3, lastVisit: "2025-06-18", notes: "Routine follow-up" },
-  { id: "P003", name: "Suresh Babu", phone: "9876501003", age: 52, visitCount: 8, lastVisit: "2025-06-10", notes: "Diabetes Type 2" },
-  { id: "P004", name: "Kavya Reddy", phone: "9876501004", age: 7, visitCount: 2, lastVisit: "2025-06-20", notes: "Paediatric – fever & cough" },
-  { id: "P005", name: "Ramesh Nair", phone: "9876501005", age: 45, visitCount: 4, lastVisit: "2025-06-12", notes: "ENT - chronic sinusitis" },
+  { id: "P001", name: "Kartheek", phone: "9876501001", email: "kartheek.demo@gmail.com", age: 34, visitCount: 5, lastVisit: "2025-06-15", notes: "Hypertension – on medication" },
+  { id: "P002", name: "Akash", phone: "9876501002", email: "akash.demo@gmail.com", age: 28, visitCount: 3, lastVisit: "2025-06-18", notes: "Routine follow-up" },
+  { id: "P003", name: "Venkat", phone: "9876501003", email: "venkat.demo@gmail.com", age: 52, visitCount: 8, lastVisit: "2025-06-10", notes: "Diabetes Type 2" },
+  { id: "P004", name: "Charith", phone: "9876501004", age: 7, visitCount: 2, lastVisit: "2025-06-20", notes: "Paediatric – fever & cough" },
+  { id: "P005", name: "Avinash", phone: "9876501005", age: 45, visitCount: 4, lastVisit: "2025-06-12", notes: "ENT - chronic sinusitis" },
   { id: "P006", name: "Anitha S", phone: "9876501006", age: 31, visitCount: 1, lastVisit: "2025-06-22", notes: "Skin allergy" },
-  { id: "P007", name: "Venkat Rao", phone: "9876501007", age: 60, visitCount: 10, lastVisit: "2025-06-08", notes: "Cardiac monitoring" },
-  { id: "P008", name: "Lakshmi P", phone: "9876501008", age: 25, visitCount: 2, lastVisit: "2025-06-19", notes: "General check-up" },
-  { id: "P009", name: "Arjun Reddy", phone: "9876501009", age: 38, visitCount: 3, lastVisit: "2025-06-14", notes: "Back pain – physiotherapy referral" },
-  { id: "P010", name: "Sunita M", phone: "9876501010", age: 42, visitCount: 6, lastVisit: "2025-06-17", notes: "Thyroid – Levothyroxine" }
+  { id: "P007", name: "Srinivas R", phone: "9876501007", age: 60, visitCount: 10, lastVisit: "2025-06-08", notes: "Cardiac monitoring" }
 ];
 
 export const today = new Date();
@@ -81,15 +78,13 @@ export const fmt = (d) => d.toISOString().split("T")[0];
 export const addDays = (n) => { const d = new Date(today); d.setDate(d.getDate() + n); return fmt(d); };
 
 export const SAMPLE_APPOINTMENTS = [
-  { id: "APT001", patientName: "Ravi Kumar", phone: "9876501001", age: 34, date: fmt(today), time: "09:00 AM", service: "general", status: "confirmed", doctorId: "D001", price: 300, notes: "Follow-up for BP" },
-  { id: "APT002", patientName: "Priya Devi", phone: "9876501002", age: 28, date: fmt(today), time: "09:30 AM", service: "skin", status: "confirmed", doctorId: "D002", price: 400, notes: "" },
-  { id: "APT003", patientName: "Suresh Babu", phone: "9876501003", age: 52, date: fmt(today), time: "10:00 AM", service: "general", status: "requested", doctorId: "D001", price: 300, notes: "Diabetes check" },
-  { id: "APT004", patientName: "Kavya Reddy", phone: "9876501004", age: 7, date: fmt(today), time: "11:00 AM", service: "child", status: "requested", doctorId: "D003", price: 350, notes: "Fever 3 days" },
-  { id: "APT005", patientName: "Ramesh Nair", phone: "9876501005", age: 45, date: fmt(today), time: "12:00 PM", service: "ent", status: "confirmed", doctorId: "D001", price: 300, notes: "" },
-  { id: "APT006", patientName: "Anitha S", phone: "9876501006", age: 31, date: addDays(1), time: "09:00 AM", service: "skin", status: "requested", doctorId: "D002", price: 400, notes: "Rash on arms" },
-  { id: "APT007", patientName: "Venkat Rao", phone: "9876501007", age: 60, date: addDays(1), time: "10:30 AM", service: "general", status: "confirmed", doctorId: "D001", price: 300, notes: "Cardiac review" },
-  { id: "APT014", patientName: "Deepa Nair", phone: "9876501014", age: 36, date: fmt(today), time: "05:00 PM", service: "general", status: "completed", doctorId: "D002", price: 460, notes: "PCOS" },
-  { id: "APT015", patientName: "Mohan Das", phone: "9876501015", age: 48, date: fmt(today), time: "05:30 PM", service: "general", status: "completed", doctorId: "D001", price: 345, notes: "" },
+  { id: "APT001", patientName: "Kartheek", phone: "9876501001", email: "kartheek.demo@gmail.com", age: 34, date: fmt(today), time: "09:00 AM", service: "general", status: "confirmed", doctorId: "D001", price: 300, notes: "Follow-up for BP", createdAt: new Date(Date.now() - 100000).toISOString() },
+  { id: "APT002", patientName: "Akash", phone: "9876501002", email: "akash.demo@gmail.com", age: 28, date: fmt(today), time: "09:30 AM", service: "skin", status: "waitlist", doctorId: "D001", price: 400, notes: "Routine check", createdAt: new Date(Date.now() - 50000).toISOString() },
+  { id: "APT003", patientName: "Venkat", phone: "9876501003", email: "venkat.demo@gmail.com", age: 52, date: fmt(today), time: "10:00 AM", service: "general", status: "requested", doctorId: "D001", price: 300, notes: "Diabetes check", createdAt: new Date().toISOString() },
+  { id: "APT004", patientName: "Charith", phone: "9876501004", age: 7, date: fmt(today), time: "11:00 AM", service: "child", status: "requested", doctorId: "D002", price: 350, notes: "Fever 3 days", createdAt: new Date().toISOString() },
+  { id: "APT005", patientName: "Avinash", phone: "9876501005", age: 45, date: fmt(today), time: "12:00 PM", service: "ent", status: "arrived", doctorId: "D002", price: 300, notes: "Sinus", createdAt: new Date(Date.now() - 200000).toISOString() },
+  { id: "APT006", patientName: "Anitha S", phone: "9876501006", age: 31, date: fmt(today), time: "01:00 PM", service: "skin", status: "cancelled", doctorId: "D003", price: 400, notes: "Rash on arms", createdAt: new Date(Date.now() - 300000).toISOString() },
+  { id: "APT007", patientName: "Srinivas R", phone: "9876501007", age: 60, date: fmt(today), time: "02:00 PM", service: "general", status: "waitlist", doctorId: "D003", price: 300, notes: "Cardiac review", createdAt: new Date(Date.now() - 40000).toISOString() },
 ];
 
 export const TIME_SLOTS = ["09:00 AM","09:30 AM","10:00 AM","10:30 AM","11:00 AM","11:30 AM","12:00 PM","05:00 PM","05:30 PM","06:00 PM","06:30 PM","07:00 PM","07:30 PM","08:00 PM","08:30 PM"];
