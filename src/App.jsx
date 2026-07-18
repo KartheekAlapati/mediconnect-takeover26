@@ -57,6 +57,7 @@ export default function App() {
   const [receptionLoggedIn, setReceptionLoggedIn] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showBot, setShowBot] = useState(true);
+  const [adminMenuOpen, setAdminMenuOpen] = useState(false);
 
   const navigate = (p) => {
     setPage(p);
@@ -142,7 +143,20 @@ export default function App() {
         return <ContactPage navigate={navigate} />;
 
       case "admin":
-        return <AdminLogin navigate={navigate} />;
+        return (
+          <AdminLogin 
+            navigate={navigate} 
+            onReceptionLogin={() => {
+              setReceptionLoggedIn(true);
+              navigate("reception");
+            }}
+            onDoctorLogin={(doctorId) => {
+              setDoctorLoggedIn(true);
+              setCurrentDoctorId(doctorId);
+              navigate("docDash");
+            }}
+          />
+        );
 
       case "receptionLogin":
         return (
@@ -271,7 +285,38 @@ export default function App() {
               ))}
             </nav>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <button
+                  onClick={() => setAdminMenuOpen(!adminMenuOpen)}
+                  className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium hover:bg-slate-800 transition"
+                >
+                  Admin Login
+                </button>
+
+                {adminMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-lg py-2 z-50">
+                    <button
+                      onClick={() => {
+                        navigate("receptionLogin");
+                        setAdminMenuOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition"
+                    >
+                      Reception Portal
+                    </button>
+                    <button
+                      onClick={() => {
+                        navigate("doctorLogin");
+                        setAdminMenuOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition"
+                    >
+                      Doctor Dashboard
+                    </button>
+                  </div>
+                )}
+              </div>
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

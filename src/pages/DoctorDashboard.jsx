@@ -38,11 +38,11 @@ export default function DoctorDashboard({
 
   const completed = filteredAppts.filter((a) => a.status === "completed");
 
-const totalPatients = new Set(
-  filteredAppts.map(
-    (a) => a.patientName || a.name
-  )
-).size;
+  const totalPatients = new Set(
+    filteredAppts.map(
+      (a) => a.patientName || a.name
+    )
+  ).size;
 
   const updateStatus = async (id, status) => {
     const { error } = await supabase.from("appointments").update({ status }).eq("id", id);
@@ -96,9 +96,18 @@ const totalPatients = new Set(
   const [aiBrief, setAiBrief] = useState(null);
   const [generatingBrief, setGeneratingBrief] = useState(false);
   const [briefError, setBriefError] = useState(null);
-  
+
   // Store metrics for UI display
   const [briefMetrics, setBriefMetrics] = useState(null);
+
+  const [briefHistory, setBriefHistory] = useState(() => {
+    try {
+      const saved = localStorage.getItem("aiBriefHistory");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
 
   const generateAIBrief = async () => {
     setGeneratingBrief(true);
@@ -112,7 +121,7 @@ const totalPatients = new Set(
       const totalAppointments = todayAppts.length;
       const cancellationCount = allTodayAppts.filter(a => a.status === "cancelled").length;
       const waitlistCount = allTodayAppts.filter(a => a.status === "waitlist").length;
-      
+
       const hourCounts = {};
       todayAppts.forEach(a => {
         if (!a.time) return;
@@ -168,6 +177,13 @@ Keep the response under 120 words. Be professional and directly address the doct
 
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Unable to generate brief.";
       setAiBrief(text);
+
+      const historyItem = { date: todayStr, text, timestamp: new Date().toISOString() };
+      setBriefHistory(prev => {
+        const updated = [historyItem, ...prev].slice(0, 5);
+        localStorage.setItem("aiBriefHistory", JSON.stringify(updated));
+        return updated;
+      });
     } catch (err) {
       console.error(err);
       setBriefError(err.message);
@@ -177,15 +193,15 @@ Keep the response under 120 words. Be professional and directly address the doct
   };
 
   console.log("Doctor ID:", currentDoctorId);
-console.log("Appointments:", filteredAppts);
-console.log("Today:", todayAppts.length);
-console.log("Upcoming:", upcoming.length);
-console.log("Completed:", completed.length);
+  console.log("Appointments:", filteredAppts);
+  console.log("Today:", todayAppts.length);
+  console.log("Upcoming:", upcoming.length);
+  console.log("Completed:", completed.length);
 
-const doctorName =
-  DOCTORS.find(
-    (d) => d.id === currentDoctorId
-  )?.name || "Doctor";
+  const doctorName =
+    DOCTORS.find(
+      (d) => d.id === currentDoctorId
+    )?.name || "Doctor";
 
   const hour = new Date().getHours();
   let greeting = "Good Night";
@@ -213,8 +229,8 @@ const doctorName =
           {greeting}, {doctorName} {emoji}
         </p>
         <p className="text-xs text-blue-600 font-medium mt-1">
-  Clinic Operations & Capacity Dashboard Active
-</p>
+          Clinic Operations & Capacity Dashboard Active
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
@@ -235,11 +251,11 @@ const doctorName =
           />
 
           <StatCard
-  icon="👥"
-  label="Total Patients"
-  value={totalPatients}
-  color="emerald"
-/>
+            icon="👥"
+            label="Total Patients"
+            value={totalPatients}
+            color="emerald"
+          />
 
           <StatCard
             icon="✅"
@@ -260,19 +276,18 @@ const doctorName =
             </span>
 
             <span className="text-sm text-slate-400">
-  {activeAppointments.length} / {totalDailyCapacity} slots
-</span>
+              {activeAppointments.length} / {totalDailyCapacity} slots
+            </span>
           </div>
 
           <div className="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
             <div
-              className={`h-2 rounded-full ${
-                capacityPercent > 80
+              className={`h-2 rounded-full ${capacityPercent > 80
                   ? "bg-red-500"
                   : capacityPercent > 50
-                  ? "bg-amber-400"
-                  : "bg-emerald-500"
-              }`}
+                    ? "bg-amber-400"
+                    : "bg-emerald-500"
+                }`}
               style={{
                 width: `${capacityPercent}%`,
               }}
@@ -291,38 +306,35 @@ const doctorName =
                 {dateFilter === "today"
                   ? `Today's Appointments (${new Date(todayStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })})`
                   : dateFilter === "prev7"
-                  ? `Appointments (${new Date(prev7Str).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} - ${new Date(todayStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })})`
-                  : `Appointments (${new Date(todayStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} - ${new Date(next7Str).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })})`}
+                    ? `Appointments (${new Date(prev7Str).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} - ${new Date(todayStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })})`
+                    : `Appointments (${new Date(todayStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} - ${new Date(next7Str).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })})`}
               </h2>
 
               <div className="flex bg-slate-100 p-1 rounded-lg">
                 <button
                   onClick={() => setDateFilter("prev7")}
-                  className={`px-3 py-1 text-xs rounded-md font-medium ${
-                    dateFilter === "prev7"
+                  className={`px-3 py-1 text-xs rounded-md font-medium ${dateFilter === "prev7"
                       ? "bg-white shadow-sm text-slate-800"
                       : "text-slate-500 hover:text-slate-700"
-                  }`}
+                    }`}
                 >
                   Prev 7 Days
                 </button>
                 <button
                   onClick={() => setDateFilter("today")}
-                  className={`px-3 py-1 text-xs rounded-md font-medium ${
-                    dateFilter === "today"
+                  className={`px-3 py-1 text-xs rounded-md font-medium ${dateFilter === "today"
                       ? "bg-white shadow-sm text-slate-800"
                       : "text-slate-500 hover:text-slate-700"
-                  }`}
+                    }`}
                 >
                   Today
                 </button>
                 <button
                   onClick={() => setDateFilter("next7")}
-                  className={`px-3 py-1 text-xs rounded-md font-medium ${
-                    dateFilter === "next7"
+                  className={`px-3 py-1 text-xs rounded-md font-medium ${dateFilter === "next7"
                       ? "bg-white shadow-sm text-slate-800"
                       : "text-slate-500 hover:text-slate-700"
-                  }`}
+                    }`}
                 >
                   Next 7 Days
                 </button>
@@ -352,76 +364,76 @@ const doctorName =
                     </tr>
                   ) : (
                     displayAppts.map((a) => (
-                    <tr
-                      key={a.id}
-                      className="border-b border-slate-50 hover:bg-slate-50"
-                    >
-                      <td className="py-3 pr-4 text-blue-600 font-medium">
-                        {a.id}
-                      </td>
+                      <tr
+                        key={a.id}
+                        className="border-b border-slate-50 hover:bg-slate-50"
+                      >
+                        <td className="py-3 pr-4 text-blue-600 font-medium">
+                          {a.id}
+                        </td>
 
-                      <td className="py-3 pr-4 font-medium text-slate-800">
-                        {a.patientName || a.name}
-                      </td>
+                        <td className="py-3 pr-4 font-medium text-slate-800">
+                          {a.patientName || a.name}
+                        </td>
 
-                      <td className="py-3 pr-4 text-slate-600 text-xs">
-                        {DOCTORS.find(
-                          (d) => d.id === a.doctorId
-                        )?.name || "—"}
-                      </td>
+                        <td className="py-3 pr-4 text-slate-600 text-xs">
+                          {DOCTORS.find(
+                            (d) => d.id === a.doctorId
+                          )?.name || "—"}
+                        </td>
 
-                      <td className="py-3 pr-4 text-slate-600 font-medium">
-                        {new Date(a.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} <br/>
-                        <span className="text-xs font-normal text-slate-500">{a.time}</span>
-                      </td>
+                        <td className="py-3 pr-4 text-slate-600 font-medium">
+                          {new Date(a.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} <br />
+                          <span className="text-xs font-normal text-slate-500">{a.time}</span>
+                        </td>
 
-                      <td className="py-3 pr-4">
-  <div className="flex items-center gap-2 flex-wrap">
-    <Badge status={a.status} />
+                        <td className="py-3 pr-4">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Badge status={a.status} />
 
-    {a.status === "requested" && (
-      <span className="px-2 py-1 text-[10px] bg-red-100 text-red-600 rounded-full font-medium">
-        Pending Confirmation
-      </span>
-    )}
-  </div>
-</td>
+                            {a.status === "requested" && (
+                              <span className="px-2 py-1 text-[10px] bg-red-100 text-red-600 rounded-full font-medium">
+                                Pending Confirmation
+                              </span>
+                            )}
+                          </div>
+                        </td>
 
-                      <td className="py-3">
-                        <div className="flex gap-1 flex-wrap">
+                        <td className="py-3">
+                          <div className="flex gap-1 flex-wrap">
 
-                          {a.status === "requested" && (
-                            <button
-                              onClick={() =>
-                                updateStatus(
-                                  a.id,
-                                  "confirmed"
-                                )
-                              }
-                              className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-lg hover:bg-blue-200"
-                            >
-                              Confirm
-                            </button>
-                          )}
-
-                          {a.status !== "completed" &&
-                            a.status !== "cancelled" && (
+                            {a.status === "requested" && (
                               <button
                                 onClick={() =>
                                   updateStatus(
                                     a.id,
-                                    "completed"
+                                    "confirmed"
                                   )
                                 }
-                                className="text-xs bg-emerald-100 text-emerald-600 px-2 py-1 rounded-lg hover:bg-emerald-200"
+                                className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-lg hover:bg-blue-200"
                               >
-                                Done
+                                Confirm
                               </button>
                             )}
-                        </div>
-                      </td>
-                    </tr>
-                  )))}
+
+                            {a.status !== "completed" &&
+                              a.status !== "cancelled" && (
+                                <button
+                                  onClick={() =>
+                                    updateStatus(
+                                      a.id,
+                                      "completed"
+                                    )
+                                  }
+                                  className="text-xs bg-emerald-100 text-emerald-600 px-2 py-1 rounded-lg hover:bg-emerald-200"
+                                >
+                                  Done
+                                </button>
+                              )}
+                          </div>
+                        </td>
+                      </tr>
+                    )))}
                 </tbody>
 
               </table>
@@ -467,6 +479,20 @@ const doctorName =
                   <span className="block text-xs font-bold text-blue-900 mb-2 uppercase tracking-wider">AI Insight & Recommendation</span>
                   {aiBrief}
                 </div>
+
+                {briefHistory.length > 1 && (
+                  <div className="mt-4 pt-4 border-t border-blue-100">
+                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Recent Briefs</h3>
+                    <div className="space-y-2">
+                      {briefHistory.slice(1).map((item, idx) => (
+                        <div key={idx} className="text-xs bg-white p-3 rounded-lg border border-blue-50 shadow-sm text-slate-600">
+                          <p className="font-bold text-blue-800 mb-1">{item.date}</p>
+                          <p className="line-clamp-2">{item.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ) : generatingBrief ? (
               <div className="bg-white p-4 rounded-xl border border-blue-100 flex items-center justify-center gap-2 h-24">
@@ -475,13 +501,29 @@ const doctorName =
                 <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '300ms' }} />
               </div>
             ) : (
-              <button
-                onClick={generateAIBrief}
-                disabled={generatingBrief}
-                className="w-full bg-blue-600 text-white py-3 rounded-xl text-sm font-semibold hover:bg-blue-700 transition shadow-sm"
-              >
-                Generate AI Daily Brief
-              </button>
+              <div className="space-y-4">
+                <button
+                  onClick={generateAIBrief}
+                  disabled={generatingBrief}
+                  className="w-full bg-blue-600 text-white py-3 rounded-xl text-sm font-semibold hover:bg-blue-700 transition shadow-sm"
+                >
+                  Generate AI Daily Brief
+                </button>
+
+                {briefHistory.length > 0 && (
+                  <div className="mt-2">
+                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Recent Briefs</h3>
+                    <div className="space-y-2">
+                      {briefHistory.map((item, idx) => (
+                        <div key={idx} className="text-xs bg-white p-3 rounded-lg border border-blue-100 shadow-sm text-slate-600">
+                          <p className="font-bold text-blue-800 mb-1">{item.date}</p>
+                          <p className="line-clamp-2">{item.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
 
             {briefError && (

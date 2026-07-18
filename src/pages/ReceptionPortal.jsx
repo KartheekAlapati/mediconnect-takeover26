@@ -321,12 +321,20 @@ export default function ReceptionPortal({
                 key={app.id}
                 app={app}
                 actionButton={
-                  <button
-                    onClick={() => updateStatus(app.id, "confirmed")}
-                    className="w-full bg-blue-600 text-white text-[11px] py-2 rounded-lg font-bold hover:bg-blue-700 transition shadow-sm"
-                  >
-                    Quick Confirm
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => updateStatus(app.id, "confirmed")}
+                      className="flex-1 bg-blue-600 text-white text-[11px] py-2 rounded-lg font-bold hover:bg-blue-700 transition shadow-sm"
+                    >
+                      Quick Confirm
+                    </button>
+                    <button
+                      onClick={() => updateStatus(app.id, "waitlist")}
+                      className="flex-1 bg-orange-100 text-orange-700 text-[11px] py-2 rounded-lg font-bold hover:bg-orange-200 transition shadow-sm"
+                    >
+                      Waitlist
+                    </button>
+                  </div>
                 }
               />
             ))}

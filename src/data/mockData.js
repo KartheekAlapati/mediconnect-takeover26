@@ -88,7 +88,7 @@ export const SAMPLE_APPOINTMENTS = [
 ];
 
 export const TIME_SLOTS = ["09:00 AM","09:30 AM","10:00 AM","10:30 AM","11:00 AM","11:30 AM","12:00 PM","05:00 PM","05:30 PM","06:00 PM","06:30 PM","07:00 PM","07:30 PM","08:00 PM","08:30 PM"];
-export const MAX_SLOTS_PER_DOCTOR = 15;
+export const MAX_SLOTS_PER_DOCTOR = 3;
 
 export const AI_RESPONSES = {
   timing: "We are open Monday to Saturday: 9:00 AM – 1:00 PM and 5:00 PM – 9:00 PM. Closed on Sundays.",
