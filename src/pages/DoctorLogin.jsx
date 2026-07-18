@@ -7,7 +7,7 @@ export default function DoctorLogin({ onLogin }) {
   const [err, setErr] = useState("");
 
   const login = () => {
-  if (u === "srinivas" && p === "srinivas123") {
+  if ((u === "srinivasa" || u === "srinivas") && (p === "srinivasa123" || p === "srinivas123")) {
     onLogin("D001");
   }
   else if (u === "priya" && p === "priya123") {
@@ -22,8 +22,8 @@ export default function DoctorLogin({ onLogin }) {
 };
 
   const autoFillDemo = () => {
-    setU("srinivas");
-setP("srinivas123");
+    setU("srinivasa");
+    setP("srinivasa123");
   };
 
   return (
@@ -50,6 +50,7 @@ setP("srinivas123");
           <input
             className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             placeholder="Username"
+            aria-label="Username"
             value={u}
             onChange={(e) => setU(e.target.value)}
           />
@@ -58,6 +59,7 @@ setP("srinivas123");
             type="password"
             className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             placeholder="Password"
+            aria-label="Password"
             value={p}
             onChange={(e) => setP(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && login()}
@@ -74,11 +76,26 @@ setP("srinivas123");
             Sign In
           </button>
 
-          <p className="text-xs text-slate-400 text-center">
-  srinivas / srinivas123<br />
-  priya / priya123<br />
-  rajesh / rajesh123
-</p>
+          <div className="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-200 text-left">
+            <p className="text-xs font-bold text-slate-500 mb-3 uppercase tracking-wider">Demo Credentials</p>
+            <div className="text-xs text-slate-500 space-y-3">
+              <div>
+                <p className="font-semibold text-slate-600 mb-1">Dr. Srinivasa Rao</p>
+                <p>Username: srinivasa</p>
+                <p>Password: srinivasa123</p>
+              </div>
+              <div>
+                <p className="font-semibold text-slate-600 mb-1">Dr. Priya</p>
+                <p>Username: priya</p>
+                <p>Password: priya123</p>
+              </div>
+              <div>
+                <p className="font-semibold text-slate-600 mb-1">Dr. Rajesh</p>
+                <p>Username: rajesh</p>
+                <p>Password: rajesh123</p>
+              </div>
+            </div>
+          </div>
         </div>
       </Card>
     </div>

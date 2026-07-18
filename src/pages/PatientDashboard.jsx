@@ -15,19 +15,27 @@ export default function PatientDashboard({ appointments, setAppointments }) {
   const myAppts = searched ? appointments.filter(a => a.phone === phone) : [];
 
   const cancel = async (id) => {
-    const { error } = await supabase.from("appointments").update({ status: "cancelled" }).eq("id", id);
-    if (!error) {
+    try {
+      const { error } = await supabase.from("appointments").update({ status: "cancelled" }).eq("id", id);
+      if (error) throw error;
       setAppointments(prev => prev.map(a => a.id === id ? {...a, status: "cancelled"} : a));
+    } catch (err) {
+      console.error(err);
+      alert("Failed to cancel appointment. Please check your connection.");
     }
   };
   
   const doReschedule = async () => {
     if (!newDate || !newTime) return;
-    const { error } = await supabase.from("appointments").update({ date: newDate, time: newTime, status: "pending" }).eq("id", reschedule);
-    if (!error) {
+    try {
+      const { error } = await supabase.from("appointments").update({ date: newDate, time: newTime, status: "pending" }).eq("id", reschedule);
+      if (error) throw error;
       setAppointments(prev => prev.map(a => a.id === reschedule ? {...a, date: newDate, time: newTime, status: "pending"} : a));
+      setReschedule(null); setNewDate(""); setNewTime("");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to reschedule appointment. Please check your connection.");
     }
-    setReschedule(null); setNewDate(""); setNewTime("");
   };
 
   return (
@@ -35,8 +43,8 @@ export default function PatientDashboard({ appointments, setAppointments }) {
       <h1 className="text-3xl font-bold text-slate-800 mb-2">My Appointments</h1>
       <p className="text-slate-600 mb-8">Enter your registered phone number to view your appointments.</p>
       <Card className="p-5 flex gap-3 mb-8">
-        <input className="flex-1 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="10-digit mobile number" value={phone} onChange={e => setPhone(e.target.value)} />
-        <button onClick={() => setSearched(true)} className="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-medium hover:bg-blue-700 transition text-sm">Find</button>
+        <input className="flex-1 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" aria-label="10-digit mobile number" placeholder="10-digit mobile number" value={phone} onChange={e => setPhone(e.target.value)} />
+        <button disabled={!phone.trim()} onClick={() => setSearched(true)} className="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-medium hover:bg-blue-700 disabled:opacity-50 transition text-sm">Find</button>
       </Card>
       {searched && myAppts.length === 0 && <p className="text-slate-400 text-center py-10">No appointments found for this number.</p>}
       {myAppts.map(a => (

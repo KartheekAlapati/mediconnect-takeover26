@@ -44,10 +44,12 @@ export default function ReceptionPortal({
       updates.arrivalTime = new Date().toISOString();
     }
 
-    const { error } = await supabase.from("appointments").update(updates).eq("id", id);
-    if (error) {
-      console.error("Update error:", error);
-      alert("Failed to update status.");
+    try {
+      const { error } = await supabase.from("appointments").update(updates).eq("id", id);
+      if (error) throw error;
+    } catch (err) {
+      console.error("Update error:", err);
+      alert("Failed to update status. Please check your connection.");
       return;
     }
 
@@ -86,10 +88,12 @@ export default function ReceptionPortal({
     const apptToCancel = appointments.find(a => a.id === id);
     if (!apptToCancel) return;
 
-    const { error } = await supabase.from("appointments").update({ status: "cancelled" }).eq("id", id);
-    if (error) {
-      console.error("Cancel error:", error);
-      alert("Failed to cancel appointment.");
+    try {
+      const { error } = await supabase.from("appointments").update({ status: "cancelled" }).eq("id", id);
+      if (error) throw error;
+    } catch (err) {
+      console.error("Cancel error:", err);
+      alert("Failed to cancel appointment. Please check your connection.");
       return;
     }
 
@@ -102,10 +106,14 @@ export default function ReceptionPortal({
       
       if (waitlisted.length > 0) {
         const promoted = waitlisted[0];
-        const { error: promoError } = await supabase.from("appointments").update({ status: "requested" }).eq("id", promoted.id);
-        if (!promoError) {
+        try {
+          const { error: promoError } = await supabase.from("appointments").update({ status: "requested" }).eq("id", promoted.id);
+          if (promoError) throw promoError;
           updatedAppointments = updatedAppointments.map((app) => (app.id === promoted.id ? { ...app, status: "requested" } : app));
           alert(`Waitlisted appointment for ${promoted.patientName || promoted.name} has been automatically promoted to Requested.`);
+        } catch (err) {
+          console.error("Promotion error:", err);
+          alert("Failed to automatically promote waitlist due to a network error.");
         }
       }
     }

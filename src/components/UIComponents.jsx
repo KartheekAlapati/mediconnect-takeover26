@@ -48,7 +48,7 @@ export function Modal({ open, onClose, title, children }) {
       <Card className="w-full max-w-lg p-6 relative" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-slate-800">{title}</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-xl leading-none">×</button>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-xl leading-none" aria-label="Close modal" title="Close modal">×</button>
         </div>
         {children}
       </Card>

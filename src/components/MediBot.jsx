@@ -180,13 +180,15 @@ export default function MediBot({ navigate, showBot }) {
                 onClick={clearChat}
                 className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/20 transition text-sm"
                 title="Clear Chat"
+                aria-label="Clear Chat"
               >
                 🗑️
               </button>
               <button
                 onClick={() => setIsOpen(false)}
                 className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/20 transition text-lg leading-none"
-                title="Minimize"
+                title="Close MediBot"
+                aria-label="Close MediBot"
               >
                 ×
               </button>
@@ -276,6 +278,8 @@ export default function MediBot({ navigate, showBot }) {
                 onClick={() => handleSend()}
                 disabled={!input.trim() || isTyping}
                 className="absolute right-1 w-8 h-8 flex items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:hover:bg-blue-600 transition shadow"
+                aria-label="Send message"
+                title="Send message"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 ml-0.5">
                   <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />
@@ -294,6 +298,8 @@ export default function MediBot({ navigate, showBot }) {
           style={{
             boxShadow: "0 10px 25px -5px rgba(37, 99, 235, 0.5), 0 8px 10px -6px rgba(37, 99, 235, 0.1)"
           }}
+          aria-label={isOpen ? "Close MediBot" : "Open MediBot"}
+          title={isOpen ? "Close MediBot" : "Open MediBot"}
         >
           {isOpen ? <span className="text-white text-xl">×</span> : <span>🤖</span>}
         </button>
@@ -301,6 +307,8 @@ export default function MediBot({ navigate, showBot }) {
           <button
             onClick={() => showBot === undefined ? null : null /* Just a dummy to keep layout consistent if needed */}
             className="absolute -top-1 -right-1 flex h-3 w-3"
+            aria-label="New notification"
+            title="New notification"
           >
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border border-white"></span>

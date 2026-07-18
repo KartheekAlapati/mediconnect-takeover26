@@ -36,6 +36,7 @@ export default function ReceptionLogin({ onLogin, navigate }) {
           <input
             className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
             placeholder="Username"
+            aria-label="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
@@ -44,6 +45,7 @@ export default function ReceptionLogin({ onLogin, navigate }) {
             type="password"
             className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
             placeholder="Password"
+            aria-label="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && login()}
@@ -66,6 +68,14 @@ export default function ReceptionLogin({ onLogin, navigate }) {
           >
             Back
           </button>
+
+          <div className="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-200 text-left">
+            <p className="text-xs font-bold text-slate-500 mb-3 uppercase tracking-wider">Demo Credentials</p>
+            <div className="text-xs text-slate-500 space-y-1">
+              <p>Username: reception</p>
+              <p>Password: reception123</p>
+            </div>
+          </div>
         </div>
       </Card>
     </div>
